@@ -1,3 +1,2 @@
-# EmbeddedProject1
+# First Embedded Systems Course Project
 
-# First Embedded Systems Course Projects
