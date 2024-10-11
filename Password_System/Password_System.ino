@@ -1,6 +1,10 @@
 #include <avr/io.h>
 #include <util/delay.h>
-#include <stdio.h>
+#include <string.h>
+#include "UART.h"
+
+#define MAX_SIZE 100
+
 #define ZERO 0x7E
 #define ONE 0x12
 #define TWO 0xBC
@@ -36,49 +40,77 @@ void displayNumber(int n){
 }
 
 void init() {
+    Uart_Init();
     DDRD = 0xFF;     
     DDRC = 0xFE;      
-    DDRB = 0x00;     
-    PORTB = 0x00;     
-    PORTC = 0x00;     
+    DDRB = 0xFF;     
+    PORTD = 0x00;     
+    PORTC = 0x00; 
+    
 }
 
 int main(void) {
     init();
-    int attempts = 3;
     int password = 7;
-    while (attempts > 0) {
+    char command[MAX_SIZE];
+    while(1){
+    Uart_ReadString(command, MAX_SIZE);
+    if(!strcmp(command, "LED_1_ON")){
+      PORTC |= (1 << PORTC4); 
+    }else if(!strcmp(command, "LED_1_OFF")){
+      PORTC &= ~(1 << PORTC4);  
+    }else if(!strcmp(command, "LED_2_ON")){
+      PORTC |= (1 << PORTC5);
+    }else if(!strcmp(command, "LED_2_OFF")){
+      PORTC &= ~(1 << PORTC5); 
+    }else if(!strcmp(command, "Start")){
+      int attempts = 3;
+      while (attempts > 0) {
         int x = 2; 
         int decimal = 0;
         displayNumber(attempts);
         while (x >= 0) {
             if ((PINB & (1 << PINB0)) == 1) { 
+                Uart_SendString("BUTTON_1_PRESSED\n");
                 PORTC |= (1 << PORTC4); 
                 decimal += power(2, x);
                 --x; 
                 while ((PINB & (1 << PINB0)) == 1); 
+                Uart_SendString("BUTTON_1_RELEASED\n");
                 _delay_ms(500);
                 PORTC &= ~(1 << PORTC4); 
             } else if ((PINC & (1 << PINC0)) == 1) { 
-                PORTC |= (1 << PORTC5); 
+                PORTC |= (1 << PORTC5);
+                Uart_SendString("BUTTON_2_PRESSED\n"); 
                 --x;  
                 while ((PINC & (1 << PINC0)) == 1); 
+                Uart_SendString("BUTTON_2_RELEASED\n");
                 _delay_ms(500); 
                 PORTC &= ~(1 << PORTC5); 
             }
         }
       if(decimal == password){
-       break;
+        Uart_SendString("You have entered the Correct Password\n");
+        break;
       }else{
         PORTC |= 1 << PORTC2;
        _delay_ms(2000);
         PORTC = OFF;
         --attempts;
+        Uart_SendString(password);
       }
     }
   if(attempts > 0){
   PORTC |= 1 << PORTC3;
   _delay_ms(2000);
-    PORTC = OFF;}
+  PORTC = OFF;}else{
+      displayNumber(attempts);
+      PORTC |= 1 << PORTC2;
+    }
+    }else{
+      Uart_SendString("Not a valid command");
+    }
+    }
+    
     return 0; 
 }
