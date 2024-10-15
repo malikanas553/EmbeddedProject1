@@ -1,3 +1,4 @@
+//Header file for all UART functions
 #ifndef __UART__
 #define __UART__
 

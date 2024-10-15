@@ -57,16 +57,16 @@ int main(void) {
             Uart_SendString("LED_1_ON \nLED_1_OFF \nLED_2_ON \nLED_2_OFF \nStart \n");
 
         } else if (!strcmp(command, "LED_1_ON")) { //Turn on First LED
-            Dio_SetRegisterBit(&PORTC, 4);
+            Dio_SetRegisterBit(&PORTC, LED_1);
 
         } else if (!strcmp(command, "LED_1_OFF")) { //Turn off First LED
-            Dio_ResetRegisterBit(&PORTC, 4);
+            Dio_ResetRegisterBit(&PORTC, LED_1);
 
         } else if (!strcmp(command, "LED_2_ON")) { //Turn on Second LED
-            Dio_SetRegisterBit(&PORTC, 5);
+            Dio_SetRegisterBit(&PORTC, LED_2);
 
         } else if (!strcmp(command, "LED_2_OFF")) { //Turn off Second LED
-            Dio_ResetRegisterBit(&PORTC, 5);
+            Dio_ResetRegisterBit(&PORTC, LED_2);
 
         } else if (!strcmp(command, "Start")) { //Start the Password System
 
@@ -84,7 +84,7 @@ int main(void) {
                     if (PINB & (1 << PINB0)) { //Check if button 1 is pressed
 
                         Uart_SendString("BUTTON_1_PRESSED\n");
-                        Dio_SetRegisterBit(&PORTC, 4); //Turn on LED 1
+                        Dio_SetRegisterBit(&PORTC, LED_1); //Turn on LED 1
                         decimal += power(2, x);
                         --x;
                         
@@ -92,11 +92,11 @@ int main(void) {
 
                         Uart_SendString("BUTTON_1_RELEASED\n");
                         _delay_ms(500);
-                        Dio_ResetRegisterBit(&PORTC, 4); //Turn off LED 1
+                        Dio_ResetRegisterBit(&PORTC, LED_1); //Turn off LED 1
 
                     } else if (PINC & (1 << PINC0)) { //Check if button 2 is pressed
 
-                        Dio_SetRegisterBit(&PORTC, 5); // Turn on LED 2
+                        Dio_SetRegisterBit(&PORTC, LED_2); // Turn on LED 2
                         Uart_SendString("BUTTON_2_PRESSED\n");
                         --x;
                         
@@ -104,14 +104,14 @@ int main(void) {
 
                         Uart_SendString("BUTTON_2_RELEASED\n");
                         _delay_ms(500);
-                        Dio_ResetRegisterBit(&PORTC, 5); //Turn off LED 2
+                        Dio_ResetRegisterBit(&PORTC, LED_2); //Turn off LED 2
                     }
                 }
 
                 if (decimal == password) { //check If correct password is inputed
                     break;
                 } else {
-                    Dio_SetRegisterBit(&PORTC, 2); //Turn on RED LED
+                    Dio_SetRegisterBit(&PORTC, RED_LED); //Turn on RED LED
                     _delay_ms(2000);
                     PORTC = OFF;
                     --attempts; //Decrease attempts
@@ -120,12 +120,12 @@ int main(void) {
 
             if (attempts > 0) { //If password is correct
                 Uart_SendString("GREEN_LED_ON\n");
-                Dio_SetRegisterBit(&PORTC, 3);
+                Dio_SetRegisterBit(&PORTC, GREEN_LED);
                 _delay_ms(2000);
                 init();
             } else {
                 displayNumber(attempts);
-                Dio_SetRegisterBit(&PORTC, 2);
+                Dio_SetRegisterBit(&PORTC, RED_LED);
                 _delay_ms(3000);
                 init();
             }
