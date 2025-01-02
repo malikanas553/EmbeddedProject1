@@ -27,3 +27,6 @@ Traditional password systems often rely on keyboards or touchscreens, which may 
 
 ### Local Root Directory  
 [Source_Code](./Password_System)  
+
+## 3. Circuit Schematic
+![Schematic](design/Password System Circuit Schematic.png)
