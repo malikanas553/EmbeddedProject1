@@ -29,4 +29,4 @@ Traditional password systems often rely on keyboards or touchscreens, which may 
 [Source_Code](./Password_System)  
 
 ## 3. Circuit Schematic
-![Schematic](design/Password System Circuit Schematic.png)
+![Schematic](./Password System Circuit Schematic.png)
